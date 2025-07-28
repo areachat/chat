@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device-Based Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+        <div class="auth-container">
+            <h1>Welcome</h1>
+            <div id="login-form" class="auth-form">
+                <input type="text" id="username-input" placeholder="Username" required>
+                <button id="login-btn">Login / Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="app-screen" class="screen hidden">
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <div class="nav-left">
+                <button id="create-room-btn">Create Chatroom</button>
+                <button id="join-room-btn">Join Chatroom</button>
+            </div>
+            <div class="nav-right">
+                <div id="profile-pic-container" class="profile-pic">
+                    <img id="profile-pic" src="" alt="Profile">
+                </div>
+                <span id="username-display"></span>
+            </div>
+        </div>
+
+        <!-- Profile Sidebar -->
+        <div id="profile-sidebar" class="sidebar hidden">
+            <div class="sidebar-content">
+                <div class="profile-header">
+                    <img id="sidebar-profile-pic" src="" alt="Profile">
+                    <h2 id="sidebar-username"></h2>
+                    <div class="user-title">User</div>
+                    <div id="join-date" class="join-date"></div>
+                </div>
+                <div class="profile-section">
+                    <h3>Profile Description</h3>
+                    <p id="profile-description"></p>
+                    <button id="edit-description-btn">Edit Description</button>
+                </div>
+                <div class="profile-section">
+                    <h3>Account Settings</h3>
+                    <button id="edit-username-btn">Edit Username</button>
+                    <button id="edit-profile-pic-btn">Change Profile Picture</button>
+                    <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatroom Section -->
+        <div id="chatroom-section" class="hidden">
+            <div id="chatroom-header">
+                <h2 id="room-code-display"></h2>
+                <button id="leave-room-btn">Leave Room</button>
+            </div>
+            <div id="messages-container"></div>
+            <div id="message-input-container">
+                <input type="text" id="message-input" placeholder="Type your message...">
+                <button id="send-message-btn">Send</button>
+            </div>
+        </div>
+
+        <!-- Join Room Modal -->
+        <div id="join-room-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Join Chatroom</h2>
+                <input type="text" id="room-code-input" placeholder="Enter room code (e.g., 0A00AA0A)" pattern="[0-9A-Za-z]{8}">
+                <button id="confirm-join-btn">Join</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <!-- Fingerprint Library -->
+    <script src="https://cdn.jsdelivr.net/npm/fingerprintjs2@2.1.4/dist/fingerprint2.min.js"></script>
+    
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+</html>
