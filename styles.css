@@ -9,20 +9,20 @@ body {
     background-color: #f5f5f5;
     color: #333;
 }
-
+.hidden {
+    display: none !important;
+}
 .screen {
     width: 100%;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed; /* Ensures it stays centered regardless of scroll */
+    top: 0;
+    left: 0;
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* Auth Screen */
 .auth-container {
     background: white;
     padding: 2rem;
@@ -31,6 +31,15 @@ body {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    margin: 20px; /* Adds spacing on smaller screens */
+    position: relative; /* Ensures proper stacking */
+    z-index: 1; /* Keeps it above other content */
+}
+@media (max-width: 480px) {
+    .auth-container {
+        margin: 15px;
+        padding: 1.5rem;
+    }
 }
 
 .auth-container h1 {
