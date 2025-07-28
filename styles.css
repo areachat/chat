@@ -377,3 +377,11 @@ body {
         width: 100%;
     }
 }
+/* Add to auth-form styles */
+.auth-form input[type="password"] {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}

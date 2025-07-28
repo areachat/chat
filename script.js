@@ -139,13 +139,16 @@ function setupEventListeners() {
         }
     });
 }
+// Add password input to DOM elements
+const passwordInput = document.getElementById('password-input');
 
-// Handle login
+// Modify handleLogin function
 function handleLogin() {
     const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
     
-    if (!username) {
-        alert("Please enter a username");
+    if (!username || !password) {
+        alert("Please enter both username and password");
         return;
     }
     
@@ -154,36 +157,60 @@ function handleLogin() {
     
     usernameRef.once('value', (snapshot) => {
         if (snapshot.exists()) {
-            // Username exists, check if this device is allowed
+            // Username exists, verify password
             const userId = snapshot.val();
             const userRef = database.ref('users').child(userId);
             
             userRef.once('value', (userSnapshot) => {
                 const userData = userSnapshot.val();
                 
+                // Verify password
+                if (userData.password !== hashPassword(password, userId)) {
+                    alert("Incorrect password");
+                    return;
+                }
+                
+                // Check if this device is allowed
                 if (userData.devices && userData.devices[deviceId]) {
                     // This device is already registered for this user
                     loginUser(userId, userData);
                 } else {
-                    // Username exists but not for this device
-                    alert("Username already taken by another device");
+                    // Add this device to allowed devices
+                    const updates = {};
+                    updates[`users/${userId}/devices/${deviceId}`] = true;
+                    
+                    database.ref().update(updates)
+                        .then(() => {
+                            loginUser(userId, userData);
+                        })
+                        .catch((error) => {
+                            console.error("Error adding device:", error);
+                            alert("Error logging in. Please try again.");
+                        });
                 }
             });
         } else {
             // Username is available, create new user
-            createNewUser(username);
+            createNewUser(username, password);
         }
     });
 }
 
-// Create new user
-function createNewUser(username) {
+// Add password hashing function (simple example - consider using a proper library)
+function hashPassword(password, salt) {
+    // In a real app, use a proper hashing algorithm like bcrypt
+    return btoa(password + salt);
+}
+
+// Update createNewUser function
+function createNewUser(username, password) {
     const newUserRef = database.ref('users').push();
     const userId = newUserRef.key;
     const joinDate = new Date().toISOString();
     
     const userData = {
         username: username,
+        password: hashPassword(password, userId), // Store hashed password
         devices: {
             [deviceId]: true
         },
@@ -204,20 +231,21 @@ function createNewUser(username) {
         .then(() => {
             // Login the new user
             loginUser(userId, userData);
+            passwordInput.value = ''; // Clear password field
         })
         .catch((error) => {
             console.error("Error creating user:", error);
             alert("Error creating account. Please try again.");
         });
 }
-
-// Login user
 function loginUser(userId, userData) {
     currentUser = {
         id: userId,
         ...userData
     };
     
+    // Clear password field
+    passwordInput.value = '';
     // Update UI
     authScreen.classList.add('hidden');
     appScreen.classList.remove('hidden');
