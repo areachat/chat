@@ -192,51 +192,25 @@ function hashPassword(password, salt) {
     // In a real app, use a proper hashing algorithm like bcrypt
     return btoa(password + salt);
 }
-
-// Update createNewUser function
-function createNewUser(username, password) {
-    const newUserRef = database.ref('users').push();
-    const userId = newUserRef.key;
-    const joinDate = new Date().toISOString();
-    
-    const userData = {
-        username: username,
-        password: hashPassword(password, userId), // Store hashed password
-        devices: {
-            [deviceId]: true
-        },
-        profile: {
-            description: "Hey there! I'm new here.",
-            title: "User",
-            joinDate: joinDate,
-            lastUsernameChange: joinDate
-        }
-    };
-    
-    // Set username in usernames index
-    database.ref('usernames').child(username).set(userId)
-        .then(() => {
-            // Create user
-            return newUserRef.set(userData);
-        })
-        .then(() => {
-            // Login the new user
-            loginUser(userId, userData);
-            passwordInput.value = ''; // Clear password field
-        })
-        .catch((error) => {
-            console.error("Error creating user:", error);
-            alert("Error creating account. Please try again.");
-        });
-}
+// Update the loginUser function
 function loginUser(userId, userData) {
+    // Ensure elements exist before manipulating them
+    const authScreen = document.getElementById('auth-screen');
+    const appScreen = document.getElementById('app-screen');
+    
+    if (!authScreen || !appScreen) {
+        console.error("Required elements not found in DOM");
+        return;
+    }
+    
     currentUser = {
         id: userId,
         ...userData
     };
     
-    // Clear password field
-    passwordInput.value = '';
+    // Clear password field if it exists
+    if (passwordInput) passwordInput.value = '';
+    
     // Update UI
     authScreen.classList.add('hidden');
     appScreen.classList.remove('hidden');
@@ -244,16 +218,24 @@ function loginUser(userId, userData) {
     // Load profile picture
     loadProfilePicture();
     
-    // Display username
-    usernameDisplay.textContent = currentUser.username;
-    sidebarUsername.textContent = currentUser.username;
+    // Display username if elements exist
+    const usernameDisplay = document.getElementById('username-display');
+    const sidebarUsername = document.getElementById('sidebar-username');
+    if (usernameDisplay) usernameDisplay.textContent = currentUser.username;
+    if (sidebarUsername) sidebarUsername.textContent = currentUser.username;
     
-    // Display join date
-    const joinDateObj = new Date(currentUser.profile.joinDate);
-    joinDate.textContent = `Joined ${joinDateObj.toLocaleDateString()}`;
+    // Display join date if element exists
+    const joinDateElement = document.getElementById('join-date');
+    if (joinDateElement) {
+        const joinDateObj = new Date(currentUser.profile.joinDate);
+        joinDateElement.textContent = `Joined ${joinDateObj.toLocaleDateString()}`;
+    }
     
-    // Display profile description
-    profileDescription.textContent = currentUser.profile.description;
+    // Display profile description if element exists
+    const profileDescription = document.getElementById('profile-description');
+    if (profileDescription) {
+        profileDescription.textContent = currentUser.profile.description;
+    }
     
     // Store last username change date
     lastUsernameChange = currentUser.profile.lastUsernameChange;
@@ -262,6 +244,43 @@ function loginUser(userId, userData) {
     checkInactiveChatrooms();
 }
 
+// Update the createNewUser function
+async function createNewUser(username, password) {
+    try {
+        const newUserRef = database.ref('users').push();
+        const userId = newUserRef.key;
+        const joinDate = new Date().toISOString();
+        
+        const userData = {
+            username: username,
+            password: hashPassword(password, userId),
+            devices: {
+                [deviceId]: true
+            },
+            profile: {
+                description: "Hey there! I'm new here.",
+                title: "User",
+                joinDate: joinDate,
+                lastUsernameChange: joinDate
+            }
+        };
+        
+        // Set username in usernames index
+        await database.ref('usernames').child(username).set(userId);
+        
+        // Create user
+        await newUserRef.set(userData);
+        
+        // Login the new user
+        loginUser(userId, userData);
+        
+        // Clear password field if it exists
+        if (passwordInput) passwordInput.value = '';
+    } catch (error) {
+        console.error("Error creating user:", error);
+        alert("Error creating account. Please try again.");
+    }
+}
 // Toggle profile sidebar
 function toggleProfileSidebar() {
     profileSidebar.classList.toggle('hidden');
