@@ -8,77 +8,97 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- Update the auth-container div with password field -->
-<div id="auth-screen" class="screen">
-    <h1>Welcome</h1>
-    <div id="login-form" class="auth-form">
-        <input type="text" id="username-input" placeholder="Username" required>
-        <input type="password" id="password-input" placeholder="Password" required>
-        <button id="login-btn">Login / Create Account</button>
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+        <div class="auth-container">
+            <h1>Welcome</h1>
+            <div id="login-form" class="auth-form">
+                <input type="text" id="username-input" placeholder="Username" required>
+                <input type="password" id="password-input" placeholder="Password" required>
+                <button id="login-btn">Login</button>
+                <p>or</p>
+                <button id="show-register-btn">Create Account</button>
+            </div>
+            <div id="register-form" class="auth-form hidden">
+                <input type="text" id="new-username-input" placeholder="Choose a username" required>
+                <input type="password" id="new-password-input" placeholder="Choose a password" required>
+                <input type="password" id="confirm-password-input" placeholder="Confirm password" required>
+                <button id="register-btn">Register</button>
+                <p>or</p>
+                <button id="show-login-btn">Login Instead</button>
+            </div>
+        </div>
     </div>
-</div>
 
     <!-- Main App Screen -->
     <div id="app-screen" class="screen hidden">
-        <!-- Top Navigation Bar -->
-        <div class="top-nav">
-            <div class="nav-left">
-                <button id="create-room-btn">Create Chatroom</button>
-                <button id="join-room-btn">Join Chatroom</button>
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Chat Rooms</h1>
+            <div class="user-profile" id="user-profile-btn">
+                <img id="profile-pic" src="https://via.placeholder.com/40" alt="Profile">
+                <span id="header-username">Username</span>
             </div>
-            <div class="nav-right">
-                <div id="profile-pic-container" class="profile-pic">
-                    <img id="profile-pic" src="" alt="Profile">
-                </div>
-                <span id="username-display"></span>
-            </div>
-        </div>
+        </header>
 
         <!-- Profile Sidebar -->
         <div id="profile-sidebar" class="sidebar hidden">
             <div class="sidebar-content">
-                <div class="profile-header">
-                    <img id="sidebar-profile-pic" src="" alt="Profile">
-                    <h2 id="sidebar-username"></h2>
-                    <div class="user-title">User</div>
-                    <div id="join-date" class="join-date"></div>
-                </div>
-                <div class="profile-section">
-                    <h3>Profile Description</h3>
-                    <p id="profile-description"></p>
-                    <button id="edit-description-btn">Edit Description</button>
-                </div>
-                <div class="profile-section">
-                    <h3>Account Settings</h3>
-                    <button id="edit-username-btn">Edit Username</button>
-                    <button id="edit-profile-pic-btn">Change Profile Picture</button>
+                <div class="profile-info">
+                    <img id="sidebar-profile-pic" src="https://via.placeholder.com/100" alt="Profile">
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;">
+                    <button id="change-pic-btn">Change Profile Picture</button>
+                    <h2 id="sidebar-username">Username</h2>
+                    <div class="user-title">User</div>
+                    <div class="join-date">Joined: <span id="join-date-span">Jan 1, 2023</span></div>
+                    <div class="profile-description" id="profile-description">No description yet.</div>
+                </div>
+                <div class="profile-actions">
+                    <button id="edit-desc-btn">Edit Description</button>
+                    <button id="edit-username-btn" disabled>Edit Username (available in 2 days)</button>
                 </div>
             </div>
         </div>
 
-        <!-- Chatroom Section -->
-        <div id="chatroom-section" class="hidden">
-            <div id="chatroom-header">
-                <h2 id="room-code-display"></h2>
-                <button id="leave-room-btn">Leave Room</button>
+        <!-- Main Content -->
+        <main class="app-main">
+            <div class="action-buttons">
+                <button id="create-room-btn">Create Chat Room</button>
+                <button id="join-room-btn">Join Chat Room</button>
             </div>
-            <div id="messages-container"></div>
-            <div id="message-input-container">
-                <input type="text" id="message-input" placeholder="Type your message...">
-                <button id="send-message-btn">Send</button>
-            </div>
-        </div>
 
-        <!-- Join Room Modal -->
-        <div id="join-room-modal" class="modal hidden">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2>Join Chatroom</h2>
-                <input type="text" id="room-code-input" placeholder="Enter room code (e.g., 0A00AA0A)" pattern="[0-9A-Za-z]{8}">
-                <button id="confirm-join-btn">Join</button>
+            <!-- Room Creation Modal -->
+            <div id="create-room-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h2>Create New Room</h2>
+                    <button id="confirm-create-room">Create</button>
+                </div>
             </div>
-        </div>
+
+            <!-- Join Room Modal -->
+            <div id="join-room-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h2>Join Room</h2>
+                    <input type="text" id="room-code-input" placeholder="Enter room code (e.g., 0A00AA0A)">
+                    <button id="confirm-join-room">Join</button>
+                </div>
+            </div>
+
+            <!-- Chat Room -->
+            <div id="chat-room" class="hidden">
+                <div class="chat-header">
+                    <h2 id="room-title">Room: <span id="room-code-display"></span></h2>
+                    <button id="leave-room-btn">Leave Room</button>
+                </div>
+                <div id="messages-container"></div>
+                <div class="message-input">
+                    <input type="text" id="message-input" placeholder="Type your message...">
+                    <button id="send-message-btn">Send</button>
+                </div>
+            </div>
+        </main>
     </div>
 
     <!-- Firebase SDK -->
@@ -86,10 +106,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     
-    <!-- Fingerprint Library -->
-    <script src="https://cdn.jsdelivr.net/npm/fingerprintjs2@2.1.4/dist/fingerprint2.min.js"></script>
+    <!-- FingerprintJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
     
-    <!-- Main Script -->
+    <!-- App Script -->
     <script src="script.js"></script>
 </body>
 </html>

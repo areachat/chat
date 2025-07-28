@@ -9,40 +9,31 @@ body {
     background-color: #f5f5f5;
     color: #333;
 }
+
 .hidden {
     display: none !important;
 }
+
 .screen {
     width: 100%;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed; /* Ensures it stays centered regardless of scroll */
-    top: 0;
-    left: 0;
 }
 
+/* Auth Screen */
 .auth-container {
-    background: white;
+    background-color: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
-    text-align: center;
-    margin: 20px; /* Adds spacing on smaller screens */
-    position: relative; /* Ensures proper stacking */
-    z-index: 1; /* Keeps it above other content */
-}
-@media (max-width: 480px) {
-    .auth-container {
-        margin: 15px;
-        padding: 1.5rem;
-    }
 }
 
 .auth-container h1 {
+    text-align: center;
     margin-bottom: 1.5rem;
     color: #2c3e50;
 }
@@ -62,10 +53,10 @@ body {
 
 .auth-form button {
     padding: 0.8rem;
-    background-color: #3498db;
-    color: white;
     border: none;
     border-radius: 4px;
+    background-color: #3498db;
+    color: white;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -75,107 +66,87 @@ body {
     background-color: #2980b9;
 }
 
-/* Main App Screen */
-.top-nav {
+.auth-form p {
+    text-align: center;
+    margin: 0.5rem 0;
+    color: #7f8c8d;
+}
+
+/* App Screen */
+.app-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 60px;
-    background-color: #2c3e50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    z-index: 100;
 }
 
-.nav-left, .nav-right {
+.user-profile {
     display: flex;
     align-items: center;
-    gap: 15px;
-}
-
-.top-nav button {
-    padding: 8px 15px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    gap: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
-.top-nav button:hover {
-    background-color: #2980b9;
-}
-
-.profile-pic {
+.user-profile img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    background-color: #ecf0f1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.profile-pic img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 
-#username-display {
-    color: white;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* Profile Sidebar */
+/* Sidebar */
 .sidebar {
     position: fixed;
-    top: 60px;
+    top: 0;
     right: 0;
     width: 300px;
-    height: calc(100vh - 60px);
+    height: 100vh;
     background-color: white;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 999;
-    transition: transform 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 90;
     transform: translateX(100%);
+    transition: transform 0.3s ease;
 }
 
-.sidebar.visible {
+.sidebar.active {
     transform: translateX(0);
 }
 
 .sidebar-content {
-    padding: 20px;
+    padding: 1.5rem;
     height: 100%;
     overflow-y: auto;
 }
 
-.profile-header {
-    text-align: center;
-    margin-bottom: 20px;
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
-.profile-header img {
-    width: 80px;
-    height: 80px;
+.profile-info img {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    margin-bottom: 10px;
     object-fit: cover;
 }
 
 .user-title {
     color: #1a5276;
     font-weight: 500;
-    margin: 5px 0;
+    background-color: #eaf2f8;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
 }
 
 .join-date {
@@ -183,80 +154,188 @@ body {
     font-size: 0.9rem;
 }
 
-.profile-section {
-    margin: 20px 0;
-    padding: 15px 0;
-    border-top: 1px solid #ecf0f1;
+.profile-description {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 80px;
 }
 
-.profile-section h3 {
-    margin-bottom: 10px;
-    color: #2c3e50;
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.profile-section p {
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.profile-section button {
-    padding: 8px 15px;
-    background-color: #3498db;
-    color: white;
+.profile-actions button {
+    padding: 0.6rem;
     border: none;
     border-radius: 4px;
+    background-color: #3498db;
+    color: white;
     cursor: pointer;
-    margin-right: 10px;
-    margin-bottom: 10px;
     transition: background-color 0.3s;
 }
 
-.profile-section button:hover {
+.profile-actions button:hover {
     background-color: #2980b9;
 }
 
-/* Chatroom Section */
-#chatroom-section {
-    margin-top: 60px;
-    width: 100%;
-    height: calc(100vh - 120px);
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+.profile-actions button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
 }
 
-#chatroom-header {
+/* Main Content */
+.app-main {
+    margin-top: 70px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.action-buttons button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #2ecc71;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-buttons button:hover {
+    background-color: #27ae60;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #2ecc71;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+    background-color: #27ae60;
+}
+
+/* Chat Room */
+.chat-room {
+    margin-top: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chat-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #ddd;
+}
+
+.chat-header h2 {
+    font-size: 1.2rem;
+}
+
+#leave-room-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #e74c3c;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#leave-room-btn:hover {
+    background-color: #c0392b;
 }
 
 #messages-container {
-    flex: 1;
+    height: 400px;
     overflow-y: auto;
-    padding: 10px;
+    padding: 1rem;
     background-color: white;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .message {
     display: flex;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.message:last-child {
+    margin-bottom: 0;
 }
 
 .message-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    margin-right: 10px;
     object-fit: cover;
 }
 
@@ -267,116 +346,58 @@ body {
 .message-header {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .message-username {
     font-weight: 500;
-    margin-right: 10px;
 }
 
 .message-title {
     font-size: 0.8rem;
     color: #1a5276;
-    font-weight: 500;
+    background-color: #eaf2f8;
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
 }
 
 .message-time {
     font-size: 0.8rem;
     color: #7f8c8d;
-    margin-left: auto;
 }
 
 .message-text {
-    line-height: 1.4;
+    padding: 0.5rem 0;
 }
 
-#message-input-container {
+.message-input {
     display: flex;
-    gap: 10px;
-    height: 50px;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
 }
 
-#message-input {
+.message-input input {
     flex: 1;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 25px;
-    font-size: 1rem;
-}
-
-#send-message-btn {
-    padding: 0 20px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#send-message-btn:hover {
-    background-color: #2980b9;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-}
-
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #7f8c8d;
-}
-
-.modal-content h2 {
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
-
-.modal-content input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 0.8rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
 }
 
-.modal-content button {
-    width: 100%;
-    padding: 10px;
-    background-color: #3498db;
-    color: white;
+.message-input button {
+    padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 4px;
+    background-color: #3498db;
+    color: white;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.modal-content button:hover {
+.message-input button:hover {
     background-color: #2980b9;
 }
 
@@ -385,12 +406,8 @@ body {
     .sidebar {
         width: 100%;
     }
-}
-/* Add to auth-form styles */
-.auth-form input[type="password"] {
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-bottom: 1rem;
+    
+    .action-buttons {
+        flex-direction: column;
+    }
 }
