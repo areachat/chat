@@ -1,12 +1,12 @@
-// Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBhfQ1Wf5JEy6sOU4ExXboRI4Ir4y_aKZw",
+  authDomain: "easy-chatroom.firebaseapp.com",
+  databaseURL: "https://easy-chatroom-default-rtdb.firebaseio.com",
+  projectId: "easy-chatroom",
+  storageBucket: "easy-chatroom.firebasestorage.app",
+  messagingSenderId: "985049198428",
+  appId: "1:985049198428:web:0cad8f285943b9f10c9b99",
+  measurementId: "G-Q0YZGZLEMM"
 };
 
 // Initialize Firebase
