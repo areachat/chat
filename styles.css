@@ -400,7 +400,38 @@ body {
 .message-input button:hover {
     background-color: #2980b9;
 }
+/* Add these styles */
+.action-buttons ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
 
+.action-buttons li {
+    margin: 0;
+}
+
+/* Update profile sidebar toggle */
+.sidebar {
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+/* Local chat indicator */
+.local-chat-indicator {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
 /* Responsive */
 @media (max-width: 768px) {
     .sidebar {

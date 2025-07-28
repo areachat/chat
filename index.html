@@ -62,11 +62,14 @@
 
         <!-- Main Content -->
         <main class="app-main">
+            <!-- Add this to the action-buttons div -->
             <div class="action-buttons">
-                <button id="create-room-btn">Create Chat Room</button>
-                <button id="join-room-btn">Join Chat Room</button>
+                <ul>
+                    <li><button id="create-room-btn">Create Chat Room</button></li>
+                    <li><button id="join-room-btn">Join Chat Room</button></li>
+                    <li><button id="local-chat-btn">Local Chat</button></li>
+                </ul>
             </div>
-
             <!-- Room Creation Modal -->
             <div id="create-room-modal" class="modal hidden">
                 <div class="modal-content">

@@ -41,6 +41,7 @@ const editDescBtn = document.getElementById('edit-desc-btn');
 const editUsernameBtn = document.getElementById('edit-username-btn');
 const changePicBtn = document.getElementById('change-pic-btn');
 const profilePicUpload = document.getElementById('profile-pic-upload');
+const localChatBtn = document.getElementById('local-chat-btn');
 
 const createRoomBtn = document.getElementById('create-room-btn');
 const joinRoomBtn = document.getElementById('join-room-btn');
@@ -294,9 +295,8 @@ function checkUsernameChangeAvailability() {
     }
 }
 
-// Profile sidebar toggle
 userProfileBtn.addEventListener('click', () => {
-    profileSidebar.classList.toggle('hidden');
+    profileSidebar.classList.toggle('active');
 });
 
 // Edit description
@@ -414,7 +414,6 @@ confirmCreateRoom.addEventListener('click', () => {
     createRoomModal.classList.add('hidden');
     createNewRoom();
 });
-
 function createNewRoom() {
     const roomCode = generateRoomCode();
     const roomRef = database.ref('rooms/' + roomCode);
@@ -431,17 +430,16 @@ function createNewRoom() {
     
     roomRef.set(roomData)
         .then(() => {
-            // Create welcome message
+            // Create welcome message (removed duplicate room code)
             const messageData = {
                 sender: 'system',
-                text: `Room created with code: ${roomCode}`,
+                text: `Room created!`,
                 timestamp: timestamp,
                 roomCode: roomCode
             };
             
             database.ref('messages/' + roomCode).push().set(messageData)
                 .then(() => {
-                    // Join the room
                     joinRoom(roomCode);
                 });
         })
@@ -449,6 +447,154 @@ function createNewRoom() {
             console.error('Error creating room:', error);
             alert('Error creating room. Please try again.');
         });
+}
+
+// Add Local Chat functionality
+localChatBtn.addEventListener('click', () => {
+    // Get user's location by IP
+    fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(locationData => {
+            const city = locationData.city;
+            if (!city) {
+                throw new Error('Could not determine city');
+            }
+            
+            // Show location to user
+            alert(`You're in ${city}. Joining local chat...`);
+            
+            // Create or join city chat room
+            const cityRoomId = 'local_' + city.toLowerCase().replace(/\s+/g, '_');
+            const cityRoomRef = database.ref('localRooms/' + cityRoomId);
+            
+            cityRoomRef.once('value')
+                .then(snapshot => {
+                    const timestamp = new Date().getTime();
+                    
+                    if (!snapshot.exists()) {
+                        // Create new city room
+                        const roomData = {
+                            createdAt: timestamp,
+                            lastActivity: timestamp,
+                            city: city,
+                            isLocal: true,
+                            users: {
+                                [currentUser.id]: true
+                            }
+                        };
+                        
+                        cityRoomRef.set(roomData)
+                            .then(() => {
+                                // Create welcome message
+                                const messageData = {
+                                    sender: 'system',
+                                    text: `Welcome to ${city} local chat!`,
+                                    timestamp: timestamp,
+                                    roomCode: cityRoomId
+                                };
+                                
+                                database.ref('messages/' + cityRoomId).push().set(messageData)
+                                    .then(() => {
+                                        joinRoom(cityRoomId, true);
+                                    });
+                            });
+                    } else {
+                        // Join existing city room
+                        database.ref('localRooms/' + cityRoomId + '/users/' + currentUser.id).set(true);
+                        database.ref('localRooms/' + cityRoomId + '/lastActivity').set(timestamp);
+                        joinRoom(cityRoomId, true);
+                    }
+                });
+        })
+        .catch(error => {
+            console.error('Error getting location:', error);
+            alert('Could not determine your location. Please try again or use regular chat.');
+        });
+});
+
+// Update joinRoom function to handle local chats
+function joinRoom(roomCode, isLocal = false) {
+    // Check if room exists
+    const roomRef = isLocal ? database.ref('localRooms/' + roomCode) : database.ref('rooms/' + roomCode);
+    
+    roomRef.once('value')
+        .then(snapshot => {
+            if (!snapshot.exists()) {
+                alert('Room not found');
+                return;
+            }
+            
+            const roomData = snapshot.val();
+            
+            // For regular rooms, check inactivity (local chats don't expire)
+            if (!isLocal) {
+                const now = new Date().getTime();
+                const lastActivity = roomData.lastActivity || roomData.createdAt;
+                const inactiveTime = (now - lastActivity) / (1000 * 60); // in minutes
+                
+                if (inactiveTime > 10) {
+                    // Delete inactive room
+                    deleteRoom(roomCode);
+                    alert('This room has been inactive for too long and has been deleted');
+                    return;
+                }
+            }
+            
+            // Update room activity
+            roomRef.child('lastActivity').set(new Date().getTime());
+            
+            // Add user to room if not already there
+            if (!roomData.users || !roomData.users[currentUser.id]) {
+                roomRef.child('users/' + currentUser.id).set(true);
+            }
+            
+            // Set current room
+            currentRoom = roomCode;
+            roomCodeDisplay.textContent = roomCode;
+            
+            // Add local indicator if it's a local chat
+            if (isLocal) {
+                const city = roomData.city || 'Local';
+                roomCodeDisplay.innerHTML = `${roomCode} <span class="local-chat-indicator">${city}</span>`;
+            } else {
+                roomCodeDisplay.textContent = roomCode;
+            }
+            
+            // Show chat room
+            chatRoom.classList.remove('hidden');
+            
+            // Load messages
+            loadMessages();
+            
+            // Set up message listener
+            setupMessageListener();
+        })
+        .catch(error => {
+            console.error('Error joining room:', error);
+            alert('Error joining room. Please try again.');
+        });
+}
+
+// Update deleteRoom function to not delete local chats
+function deleteRoom(roomCode) {
+    // Don't delete local rooms
+    if (roomCode.startsWith('local_')) return;
+    
+    // Delete room and its messages
+    const updates = {};
+    updates['rooms/' + roomCode] = null;
+    updates['messages/' + roomCode] = null;
+    
+    database.ref().update(updates)
+        .catch(error => {
+            console.error('Error deleting room:', error);
+        });
+    
+    // If we're currently in this room, leave it
+    if (currentRoom === roomCode) {
+        chatRoom.classList.add('hidden');
+        currentRoom = null;
+    }
 }
 
 function generateRoomCode() {
@@ -487,56 +633,6 @@ confirmJoinRoom.addEventListener('click', () => {
     
     joinRoom(roomCode);
 });
-
-function joinRoom(roomCode) {
-    // Check if room exists
-    database.ref('rooms/' + roomCode).once('value')
-        .then(snapshot => {
-            if (!snapshot.exists()) {
-                alert('Room not found');
-                return;
-            }
-            
-            const roomData = snapshot.val();
-            
-            // Check if room is inactive
-            const now = new Date().getTime();
-            const lastActivity = roomData.lastActivity || roomData.createdAt;
-            const inactiveTime = (now - lastActivity) / (1000 * 60); // in minutes
-            
-            if (inactiveTime > 10) {
-                // Delete inactive room
-                deleteRoom(roomCode);
-                alert('This room has been inactive for too long and has been deleted');
-                return;
-            }
-            
-            // Update room activity
-            database.ref('rooms/' + roomCode + '/lastActivity').set(now);
-            
-            // Add user to room if not already there
-            if (!roomData.users || !roomData.users[currentUser.id]) {
-                database.ref('rooms/' + roomCode + '/users/' + currentUser.id).set(true);
-            }
-            
-            // Set current room
-            currentRoom = roomCode;
-            roomCodeDisplay.textContent = roomCode;
-            
-            // Show chat room
-            chatRoom.classList.remove('hidden');
-            
-            // Load messages
-            loadMessages();
-            
-            // Set up message listener
-            setupMessageListener();
-        })
-        .catch(error => {
-            console.error('Error joining room:', error);
-            alert('Error joining room. Please try again.');
-        });
-}
 
 function loadMessages() {
     messagesContainer.innerHTML = '';
@@ -703,22 +799,4 @@ function checkInactiveRooms() {
                 deleteRoom(roomCode);
             });
         });
-}
-
-function deleteRoom(roomCode) {
-    // Delete room and its messages
-    const updates = {};
-    updates['rooms/' + roomCode] = null;
-    updates['messages/' + roomCode] = null;
-    
-    database.ref().update(updates)
-        .catch(error => {
-            console.error('Error deleting room:', error);
-        });
-    
-    // If we're currently in this room, leave it
-    if (currentRoom === roomCode) {
-        chatRoom.classList.add('hidden');
-        currentRoom = null;
-    }
 }
