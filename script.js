@@ -13,7 +13,7 @@ const database = firebase.database();
 const storage = firebase.storage();
 
 // DOM Elements
-const authScreen = document.getElementById('auth-container');
+const authScreen = document.getElementById('auth-screen');
 const appScreen = document.getElementById('app-screen');
 const loginBtn = document.getElementById('login-btn');
 const usernameInput = document.getElementById('username-input');
